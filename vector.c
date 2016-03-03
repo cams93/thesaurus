@@ -7,6 +7,8 @@
 
 void VectorNew(vector *v, int elemSize, VectorFreeFunction freeFn, int initialAllocation)
 {
+	if(initialAllocation == 0)
+		initialAllocation = 4;
 	v->elems = malloc(elemSize*initialAllocation);
 	assert(v->elems != NULL && "No hay memoria");
 	v->elemSize = elemSize;
@@ -111,6 +113,8 @@ void VectorMap(vector *v, VectorMapFunction mapFn, void *auxData)
 static const int kNotFound = -1;
 int VectorSearch(const vector *v, const void *key, VectorCompareFunction searchFn, int startIndex, bool isSorted)
 {
+	if(VectorLength(v) == 0)
+		return kNotFound;
 	assert(startIndex < v->currentPosition && "Posicion no valida");
 	void *elemAddr;
   	void *base = (char *) v->elems + startIndex * v->elemSize;
