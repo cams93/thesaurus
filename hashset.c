@@ -14,14 +14,14 @@ void HashSetNew(hashset *h, int elemSize, int numBuckets,
 	h->buckets = malloc(sizeof(vector) * numBuckets);
 	int i;
 	for (i = 0; i < numBuckets; i++) {
-    	void *vAddress = (char*)h->buckets + i * sizeof(vector);
+    	vector *vAddress = h->buckets + i;
     	VectorNew(vAddress, elemSize, freefn, 4);
   	}
 }
 
 void HashSetDispose(hashset *h){
 	int i;
-	void *vAddress;
+	vector *vAddress;
 	for(i = 0; i < h->numBuckets; i++){
 		vAddress = h->buckets + i;
 		VectorDispose(vAddress);
@@ -32,7 +32,7 @@ void HashSetDispose(hashset *h){
 int HashSetCount(const hashset *h){ 
 	int i;
 	int count = 0;
-	void *vAddress;
+	vector *vAddress;
 	for(i = 0; i < h->numBuckets; i++){
 		vAddress = h->buckets + i;
 		count += VectorLength(vAddress);
@@ -43,7 +43,7 @@ int HashSetCount(const hashset *h){
 void HashSetMap(hashset *h, HashSetMapFunction mapfn, void *auxData){
 	assert(mapfn != NULL && "mapping routine is NULL");
 	int i;
-	void *vAddress;
+	vector *vAddress;
 	for(int i = 0; i < h->numBuckets; i++){
 		vAddress = h->buckets + i;
 		VectorMap(vAddress, mapfn, auxData);
@@ -53,7 +53,7 @@ void HashSetMap(hashset *h, HashSetMapFunction mapfn, void *auxData){
 void HashSetEnter(hashset *h, const void *elemAddr){
 	assert(elemAddr != NULL && "elemAddr can't be NULL");
 	int hashCode = h->hashfn(elemAddr, h->numBuckets);
-	void *vAddress;
+	vector *vAddress;
 	assert(hashCode >= 0 && hashCode < h->numBuckets && 
 		"not possible to insert the specified element into the specified hashset");
 	vAddress = h->buckets + hashCode;
@@ -67,7 +67,7 @@ void HashSetEnter(hashset *h, const void *elemAddr){
 void *HashSetLookup(const hashset *h, const void *elemAddr){ 
 	assert(elemAddr != NULL && "elemAddr can't be NULL");
 	int hashCode = h->hashfn(elemAddr, h->numBuckets);
-	void *vAddress;
+	vector *vAddress;
 	assert(hashCode >= 0 && hashCode < h->numBuckets && 
 		"not possible to insert the specified element into the specified hashset");
   	vAddress = h->buckets + hashCode;
